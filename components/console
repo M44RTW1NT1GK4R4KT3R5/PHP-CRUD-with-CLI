@@ -1,0 +1,61 @@
+#!/usr/bin/env php
+<?php include 'autoloader.php';
+
+if (!isset($_SERVER['argv'][1])) {
+	echo <<<BANAAN
+	
+commands:
+- truncate/table
+- create/table
+- drop/table
+
+BANAAN;
+	exit();
+}
+
+echo PHP_EOL;
+switch ($_SERVER['argv'][1]) {
+	case 'truncate/table':
+	case 't/t':
+		if (prompt('Are you sure you want to truncate the table?')) {
+			echo 'truncating table registrations' . PHP_EOL . PHP_EOL;
+			(new Database())->truncate();
+			echo 'table registrations has been truncated successfully' . PHP_EOL;
+			break;
+		}
+		echo 'Ok ok sorry sorry, I wont do it' . PHP_EOL;
+		break;
+	case 'create/table':
+	case 'c/t':
+		echo 'creating table registrations' . PHP_EOL . PHP_EOL;
+		(new Database())->createTable();
+		echo 'table registrations has been created successfully' . PHP_EOL;
+		break;
+
+	case 'drop/table':
+	case 'd/t':
+		if (prompt('Are you sure you want to drop the table?')) {
+			echo 'dropping table registrations' . PHP_EOL . PHP_EOL;
+			(new Database())->dropTable();
+			echo 'table registrations has been dropped successfully' . PHP_EOL;
+			break;
+		}
+		echo 'Ok ok sorry sorry, I wont do it.' . PHP_EOL;
+		break;
+	default:
+		echo 'unknown command ' . $_SERVER['argv'][1] . PHP_EOL;
+
+}
+
+function prompt($msg):bool
+{
+	echo $msg . ' [yes/no] (no):';
+	$question = trim(fgets(STDIN));
+	if ($question == 'yes' || $question == 'y') {
+		return true;
+	} elseif ($question == 'no' || $question == 'n' || $question == '') {
+		return false;
+	}
+	echo PHP_EOL . 'Not a valid answer.' . PHP_EOL . PHP_EOL;
+	return prompt($msg);
+}
