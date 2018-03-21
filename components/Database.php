@@ -4,9 +4,9 @@ class Database
 {
 
 	private $pdo;
-	private $serverhost = 'localhost';
-	private $servername = 'sprint';
-	private $username = 'root';
+	private $serverhost = '';
+	private $servername = '';
+	private $username = '';
 	private $password = '';
 
 	public function __construct()
