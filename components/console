@@ -15,6 +15,24 @@ BANAAN;
 
 echo PHP_EOL;
 switch ($_SERVER['argv'][1]) {
+	case 'create/database':
+	case 'c/d':
+		$db = requestName('Database name: ');
+		if (new NewDB($db)){
+			echo 'database has been created successfully'.PHP_EOL.PHP_EOL;
+		}else{
+			echo 'There were problems creating the database'.PHP_EOL;
+			break;
+		}
+		if (!prompt('Do you also want to create the table?')) {
+			break;
+		}
+	case 'create/table':
+	case 'c/t':
+		echo 'creating table registrations' . PHP_EOL . PHP_EOL;
+		(new Database())->createTable();
+		echo 'table registrations has been created successfully' . PHP_EOL;
+		break;
 	case 'truncate/table':
 	case 't/t':
 		if (prompt('Are you sure you want to truncate the table?')) {
@@ -24,12 +42,6 @@ switch ($_SERVER['argv'][1]) {
 			break;
 		}
 		echo 'Ok ok sorry sorry, I wont do it' . PHP_EOL;
-		break;
-	case 'create/table':
-	case 'c/t':
-		echo 'creating table registrations' . PHP_EOL . PHP_EOL;
-		(new Database())->createTable();
-		echo 'table registrations has been created successfully' . PHP_EOL;
 		break;
 
 	case 'drop/table':
@@ -49,7 +61,7 @@ switch ($_SERVER['argv'][1]) {
 
 function prompt($msg):bool
 {
-	echo $msg . ' [yes/no] (no):';
+	echo $msg . ' [yes/no] (no): ';
 	$question = trim(fgets(STDIN));
 	if ($question == 'yes' || $question == 'y') {
 		return true;
@@ -58,4 +70,14 @@ function prompt($msg):bool
 	}
 	echo PHP_EOL . 'Not a valid answer.' . PHP_EOL . PHP_EOL;
 	return prompt($msg);
+}
+function requestName($msg):string
+{
+	echo $msg;
+	$question = trim(fgets(STDIN));
+	if (!empty($question) && $question!= '') {
+		return $question;
+	} else {
+		return requestName($msg);
+	}
 }

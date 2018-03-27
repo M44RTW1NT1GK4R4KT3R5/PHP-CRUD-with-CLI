@@ -4,15 +4,19 @@ class Database
 {
 
 	private $pdo;
-	private $serverhost = '';
-	private $servername = '';
-	private $username = '';
-	private $password = '';
 
 	public function __construct()
 	{
 		try {
-			$this->pdo = new PDO("mysql:host=$this->serverhost;dbname=$this->servername", $this->username, $this->password);
+			$ini = new IniFile('parameters.ini');
+			$server = $ini->getParameter('host');
+			$db = $ini->getParameter('database');
+			$user = $ini->getParameter('user');
+			$password = $ini->getParameter('password');
+			if ($db == ''){
+				die('no database existing, run "php components/console create/database" to create a database.');
+			}
+			$this->pdo = new PDO("mysql:host=$server;dbname=$db", $user, $password);
 			$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		} catch (PDOException $e) {
 			die($e->getMessage());
