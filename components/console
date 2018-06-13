@@ -4,10 +4,12 @@
 if (!isset($_SERVER['argv'][1])) {
 	echo <<<BANAAN
 	
-commands:
-- truncate/table
-- create/table
-- drop/table
+\033[1;34mcommands:
+\033[0m- create/database	\033[1;32m--Generates a new database\033[0m
+- truncate/table	\033[1;32m--Truncates the registrations table\033[0m
+- create/table		\033[1;32m--Generates the registrations table\033[0m
+- drop/table		\033[1;32m--Drops the registrations table\033[0m
+- generate/entity	\033[1;32m--Generates a new entity\033[0m
 
 BANAAN;
 	exit();
@@ -15,30 +17,49 @@ BANAAN;
 
 echo PHP_EOL;
 switch ($_SERVER['argv'][1]) {
+
+	case 'loadingbar':
+		echo "Loading: \033[0;34m░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░";
+		for ($i = 1; $i <= 100; $i++) {
+			$str='';
+			for ($k=0;$k<$i;$k++){
+				$str.='█';
+			}
+			for ($l=0;$l<(100-$i);$l++){
+				$str.='░';
+			}
+			echo "\033[100D";
+			echo $str;
+			usleep(100000);
+			//sleep(1);
+		}
+		echo "\033[0m";
+		break;
+
 	case 'create/database':
 	case 'c/d':
 		$db = requestName('Database name: ');
-		if (new NewDB($db)){
-			echo 'database has been created successfully'.PHP_EOL.PHP_EOL;
-		}else{
-			echo 'There were problems creating the database'.PHP_EOL;
+		if (NewDB::create($db)) {
+			echo "\033[1;32mOK\033[0m".' database has been created successfully' . PHP_EOL . PHP_EOL;
+		} else {
+			echo "\033[1;31mERROR\033[0m".' There were problems creating the database' . PHP_EOL;
 			break;
 		}
-		if (!prompt('Do you also want to create the table?')) {
+		if (!confirm('Do you also want to create the table?')) {
 			break;
 		}
 	case 'create/table':
 	case 'c/t':
 		echo 'creating table registrations' . PHP_EOL . PHP_EOL;
 		(new Database())->createTable();
-		echo 'table registrations has been created successfully' . PHP_EOL;
+		echo "\033[1;32mOK\033[0m".' table registrations has been created successfully' . PHP_EOL;
 		break;
 	case 'truncate/table':
 	case 't/t':
-		if (prompt('Are you sure you want to truncate the table?')) {
+		if (confirm('Are you sure you want to truncate the table?')) {
 			echo 'truncating table registrations' . PHP_EOL . PHP_EOL;
 			(new Database())->truncate();
-			echo 'table registrations has been truncated successfully' . PHP_EOL;
+			echo "\033[1;32mOK\033[0m".' table registrations has been truncated successfully' . PHP_EOL;
 			break;
 		}
 		echo 'Ok ok sorry sorry, I wont do it' . PHP_EOL;
@@ -46,20 +67,38 @@ switch ($_SERVER['argv'][1]) {
 
 	case 'drop/table':
 	case 'd/t':
-		if (prompt('Are you sure you want to drop the table?')) {
+		if (confirm('Are you sure you want to drop the table?')) {
 			echo 'dropping table registrations' . PHP_EOL . PHP_EOL;
 			(new Database())->dropTable();
-			echo 'table registrations has been dropped successfully' . PHP_EOL;
+			echo "\033[1;32mOK\033[0m".' table registrations has been dropped successfully' . PHP_EOL;
 			break;
 		}
 		echo 'Ok ok sorry sorry, I wont do it.' . PHP_EOL;
 		break;
+
+	case 'generate/entity':
+	case 'g/e':
+		$name = requestName('Entity name: ');
+		$db = new EntityGenerator($name);
+		for ($i = 0; $i < 100; $i++) {
+			$field = fieldPrompt();
+			if (!empty($field) && $field != '') {
+				$db->addVar($field);
+			} else {
+				echo 'generating entity ' . $name . PHP_EOL;
+				$db->generateEntity();
+				echo "\033[1;32mOK\033[0m".' entity has been generated';
+				break;
+			}
+		}
+
+		break;
 	default:
-		echo 'unknown command ' . $_SERVER['argv'][1] . PHP_EOL;
+		echo "\033[1;31mERROR\033[0m".' unknown command '."\033[1;33m" . $_SERVER['argv'][1] . PHP_EOL;
 
 }
 
-function prompt($msg):bool
+function confirm($msg): bool
 {
 	echo $msg . ' [yes/no] (no): ';
 	$question = trim(fgets(STDIN));
@@ -69,15 +108,23 @@ function prompt($msg):bool
 		return false;
 	}
 	echo PHP_EOL . 'Not a valid answer.' . PHP_EOL . PHP_EOL;
-	return prompt($msg);
+	return confirm($msg);
 }
-function requestName($msg):string
+
+function requestName($msg): string
 {
 	echo $msg;
 	$question = trim(fgets(STDIN));
-	if (!empty($question) && $question!= '') {
+	if (!empty($question) && $question != '') {
 		return $question;
 	} else {
 		return requestName($msg);
 	}
+}
+
+function fieldPrompt(): string
+{
+	echo 'Field name: ';
+	$question = trim(fgets(STDIN));
+	return $question;
 }

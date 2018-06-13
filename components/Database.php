@@ -14,7 +14,7 @@ class Database
 			$user = $ini->getParameter('user');
 			$password = $ini->getParameter('password');
 			if ($db == ''){
-				die('no database existing, run "php components/console create/database" to create a database.');
+				die('no database existing, run "php components/console create/database" in the command line of your project to create a database.');
 			}
 			$this->pdo = new PDO("mysql:host=$server;dbname=$db", $user, $password);
 			$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

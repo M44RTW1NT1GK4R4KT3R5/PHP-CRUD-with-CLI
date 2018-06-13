@@ -3,9 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<?php include_once 'views/stylesheets.php'; ?>
-	<title>
-		wijzig
-	</title>
+	<title>Wijzig <?php echo $registration->getName(); ?></title>
 </head>
 <body>
 <div class="container section no-pad-bot">

@@ -2,7 +2,7 @@
 
 class NewDB
 {
-	public function __construct($db)
+	public static function create($db)
 	{
 		try {
 			$ini = new IniFile('parameters.ini');
