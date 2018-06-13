@@ -6,7 +6,7 @@
 
  2. Create a database in your MySQL server
 
- 3. Change the serverhost, servername, username and password variables in `components/Database.php` to your local settings
+ 3. Change the serverhost, username and password variables in `components/data/parameters.ini` to your local settings
 
  4. run `php components/console create/table` in your terminal to create the table
  
